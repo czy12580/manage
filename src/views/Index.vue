@@ -15,21 +15,16 @@
             </mu-card-header>
           </mu-card>
           <mu-list>
-            <mu-list-item button @click="toUserList">
-              <mu-list-item-title>用户列表</mu-list-item-title>
-            </mu-list-item>
-            <mu-list-item button>
-              <mu-list-item-title>用户管理</mu-list-item-title>
-            </mu-list-item>
-            <mu-list-item button @click="toAdminTool">
-              <mu-list-item-title>管理员工具</mu-list-item-title>
+            <mu-list-item button v-for="item, index in menuList" :key="index" @click="toPage(item.index)">
+              <mu-list-item-title>{{ item.title }}</mu-list-item-title>
             </mu-list-item>
             <mu-list-item @click="open = false" button>
-              <mu-list-item-title>Close</mu-list-item-title>
+              <mu-list-item-title>关闭</mu-list-item-title>
             </mu-list-item>
           </mu-list>
         </mu-drawer>
       </div>
+      <div class="main"></div>
     </div>
 </template>
 
@@ -41,7 +36,21 @@
             isLogin: false,
             name: '',
             open: false,
-            position: 'left'
+            position: 'left',
+            menuList: [
+              {
+                title: "用户列表",
+                index: '/userlist'
+              },
+              {
+                title: "用户管理",
+                index: '/'
+              },
+              {
+                title: "用户列表",
+                index: '/admintool'
+              },
+            ]
           }
         },
         methods: {
@@ -49,11 +58,8 @@
             localStorage.removeItem('token');
             this.$router.push('/login');
           },
-          toUserList() {
-            this.$router.push('/userlist');
-          },
-          toAdminTool() {
-            this.$router.push('/admintool')
+          toPage(index) {
+            this.$router.push(index);
           }
         },
         mounted() {
@@ -67,5 +73,16 @@
 </script>
 
 <style scoped>
-
+  .main {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url(../assets/login-bg.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center 0;
+    z-index:-10;
+  }
 </style>

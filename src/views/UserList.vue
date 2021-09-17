@@ -8,9 +8,10 @@
           <a class="add-btn" @click="addUser()"><img src="../assets/添加.png" width="40" height="40"></a>
           <mu-data-table :columns="columns" :sort.sync="sort" @sort-change="handleSortChange" :data="userList">
             <template slot-scope="scope">
-              <td>{{ scope.row.userid }}</td>
+              <td>{{ scope.row.id }}</td>
+              <td>{{ scope.row.phone }}</td>
               <td>{{ scope.row.password }}</td>
-              <td>{{ scope.row.username }}</td>
+              <td>{{ scope.row.name }}</td>
               <td>{{ scope.row.email }}</td>
               <td>
                 <mu-menu>
@@ -34,16 +35,16 @@
       </mu-container>
     </div>
 
-    //添加表单
+    <!--添加表单-->
     <mu-dialog width="800" :open.sync="addForm" :esc-press-close="false" :overlay-close="false">
       <mu-appbar style="width: 100%;" color="primary" title="用户信息">
         <mu-button flat slot="right" @click="closeDialog">x</mu-button>
       </mu-appbar>
       <div class="form-content">
-         <mu-text-field class="mu-input-field" v-model="newUser.username" label="用户名" label-float></mu-text-field>
+         <mu-text-field class="mu-input-field" v-model="newUser.name" label="用户名" label-float></mu-text-field>
          <mu-text-field class="mu-input-field ml30" v-model="newUser.password" label="密码" label-float></mu-text-field>
          <mu-text-field class="mu-input-field" label="邮箱" v-model="newUser.email" label-float></mu-text-field>
-         <mu-text-field class="mu-input-field ml30" v-model="newUser.userid" label="手机号码" label-float></mu-text-field>
+         <mu-text-field class="mu-input-field ml30" v-model="newUser.phone" label="手机号码" label-float></mu-text-field>
         <div>
           <mu-button color="primary" @click="submit">提交</mu-button>
         </div>
@@ -51,13 +52,13 @@
 
     </mu-dialog>
 
-    //编辑表单
+    <!--编辑表单-->
     <mu-dialog width="800" :open.sync="openForm" :esc-press-close="false" :overlay-close="false">
       <mu-appbar style="width: 100%;" color="primary" title="用户信息">
         <mu-button flat slot="right" @click="closeDialog">x</mu-button>
       </mu-appbar>
       <div class="form-content">
-         <mu-text-field class="mu-input-field" v-model="formList.username" label="用户名" label-float></mu-text-field>
+         <mu-text-field class="mu-input-field" v-model="formList.name" label="用户名" label-float></mu-text-field>
          <mu-text-field class="mu-input-field ml30" v-model="formList.password" label="密码" label-float></mu-text-field>
          <mu-text-field class="mu-input-field" v-model="formList.email" label="邮箱" label-float></mu-text-field>
         <div>
@@ -86,9 +87,10 @@
               order: 'asc'
             },
             columns: [
-              {title: 'ID', width: 200, name: 'ID'},
+              {title: 'ID', width: 100, name: 'ID'},
+              {title: '手机号码', width: 200, name: 'phone'},
               {title: '密码', width: 200, name: 'password'},
-              {title: '用户名', width: 100, name: 'username'},
+              {title: '用户名', width: 100, name: 'name'},
               {title: '邮箱', width: 200, name: 'email'},
               {title: '操作',width: 200, name: 'action'}
             ],
@@ -96,20 +98,20 @@
             addForm: false,
             formList: [],
             newUser: {
-              username: '',
+              name: '',
               password: '',
-              email: '',
-              userid: ''
+              phone: '',
+              email: ''
             }
           }
       },
       created() {
           var that = this;
-          this.$axios.post('http://127.0.0.1/api/alluser.php')
+          this.$axios.get('api/user')
             .then(function (response) {
               that.userList = response.data;
             });
-          this.$axios.get('api/listUsers')
+          this.$axios.get('api/admin')
             .then(function (response) {
               console.log(response);
             })
@@ -133,14 +135,19 @@
             this.isEdit = false;
           },
           submit() {
+            var that = this;
             if (this.isEdit) {
               var data = this.formList;
               this.openForm = false;
               console.log(data);
             } else {
-              var data = this.newUser;
+              var data = that.newUser;
               this.addForm = false;
               console.log(data);
+              this.$axios.post('api/adduser', data)
+                .then(function (response) {
+                  console.log(response);
+                })
             }
           }
       }

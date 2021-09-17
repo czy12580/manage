@@ -1,10 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
-import Login from "@/views/Login"
-import Index from '@/views/Index'
-import UserList from '@/views/UserList'
-import Admintool from '@/views/AdminTool'
 
 Vue.use(Router)
 
@@ -13,22 +8,22 @@ const router = new Router({
     {
       path: '/',
       name: 'Index',
-      component: Index
+      component: () => import("@/views/Index")
     },
     {
       path: '/login',
       name: 'Login',
-      component: Login
+      component: () => import("@/views/Login")
     },
     {
       path: '/userlist',
       name: 'UserList',
-      component: UserList
+      component: () => import("@/views/UserList")
     },
     {
       path: '/admintool',
-      name: Admintool,
-      component: Admintool
+      name: 'Admintool',
+      component: () => import("@/views/AdminTool")
     }
   ]
 });

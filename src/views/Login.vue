@@ -1,20 +1,27 @@
 <template>
-  <div class="login-box">
-    <div class="top-img"><img src="@/assets/logo.png"></div>
-    <form>
-      <div class="item">
-        <mu-container>
-          <mu-text-field class="mu-input-field" v-model="name" label="用户名" label-float color="#FFF"></mu-text-field><br/>
-        </mu-container>
-      </div>
-      <div class="item">
-        <mu-container>
-          <mu-text-field v-model="password" label="密码" label-float color="#FFF" :action-icon="visibility ? '隐藏' : '显示'" :action-click="() => (visibility = !visibility)" :type="visibility ? 'text' : 'password'"></mu-text-field><br/>
-        </mu-container>
-      </div>
-      <mu-button @click="login" color="success">登录</mu-button>
-    </form>
+  <div class="login-wrap">
+    <div class="login-box">
+      <div class="top-img"><img src="@/assets/logo.png"></div>
+      <form>
+        <div class="item">
+          <mu-container>
+            <mu-text-field class="mu-input-field" v-model="name" label="用户名" label-float color="#FFF"></mu-text-field>
+            <br/>
+          </mu-container>
+        </div>
+        <div class="item">
+          <mu-container>
+            <mu-text-field v-model="password" label="密码" label-float color="#FFF"
+                           :action-icon="visibility ? '隐藏' : '显示'" :action-click="() => (visibility = !visibility)"
+                           :type="visibility ? 'text' : 'password'"></mu-text-field>
+            <br/>
+          </mu-container>
+        </div>
+        <mu-button @click="login" color="success">登录</mu-button>
+      </form>
+    </div>
   </div>
+
 
 </template>
 
@@ -26,26 +33,39 @@
       return {
         name: '',
         password: '',
-        visibility: false
+        visibility: false,
+        log: false,
+        adminList: []
       }
     },
     methods: {
-      login: function () {
-        if (this.name == 'admin' && this.password == 123456) {
-          localStorage.setItem('token', this.name);
-          this.$router.push('/');
-          this.$message({
-            message: '登录成功',
-            type: 'success',
-            duration: 2000
+      login: async function () {
+        var that = this;
+        this.$axios.get('api/admin')
+          .then(function (response) {
+            console.log(response.data);
+            that.adminList = response.data;
+            that.adminList.forEach(function (v) {
+              if (that.name == v.name && that.password == v.password) {
+                that.log = true;
+              }
+            });
+            if (that.log) {
+              localStorage.setItem('token', that.name);
+              that.$router.push('/');
+              that.$message({
+                message: '登录成功',
+                type: 'success',
+                duration: 2000
+              });
+            } else {
+              that.$message({
+                message: '登录失败',
+                type: 'error',
+                duration: 2000
+              });
+            }
           });
-        } else {
-          this.$message({
-            message: '登录失败',
-            type: 'error',
-            duration: 2000
-          });
-        }
       }
     }
   }
