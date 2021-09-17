@@ -5,7 +5,7 @@
         <div class="content">
           <mu-container>
             <mu-card>
-              <h3>管理员工具</h3>
+              <h3 class="title">管理员工具</h3>
             </mu-card>
           </mu-container>
 
@@ -25,5 +25,4 @@
 </script>
 
 <style scoped>
-
 </style>
