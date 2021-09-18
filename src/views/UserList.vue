@@ -20,11 +20,8 @@
                     <mu-list-item button @click="edit($event, scope.row)">
                       <mu-list-item-title>编辑</mu-list-item-title>
                     </mu-list-item>
-                    <mu-list-item button>
-                      <mu-list-item-title>修改修改修改</mu-list-item-title>
-                    </mu-list-item>
-                    <mu-list-item button>
-                      <mu-list-item-title>修改修改修改修改</mu-list-item-title>
+                    <mu-list-item button @click="del($event, scope.row)">
+                      <mu-list-item-title>删除</mu-list-item-title>
                     </mu-list-item>
                   </mu-list>
                 </mu-menu>
@@ -41,13 +38,32 @@
         <mu-button flat slot="right" @click="closeDialog">x</mu-button>
       </mu-appbar>
       <div class="form-content">
-         <mu-text-field class="mu-input-field" v-model="newUser.name" label="用户名" label-float></mu-text-field>
-         <mu-text-field class="mu-input-field ml30" v-model="newUser.password" label="密码" label-float></mu-text-field>
-         <mu-text-field class="mu-input-field" label="邮箱" v-model="newUser.email" label-float></mu-text-field>
-         <mu-text-field class="mu-input-field ml30" v-model="newUser.phone" label="手机号码" label-float></mu-text-field>
-        <div>
-          <mu-button color="primary" @click="submit">提交</mu-button>
-        </div>
+        <mu-container>
+          <mu-form ref="form" :model="newUser" class="mu-demo-form">
+            <mu-form-item label="用户名" prop="name" :rules="usernameRules">
+              <mu-text-field v-model="newUser.name" prop="name"></mu-text-field>
+            </mu-form-item>
+            <mu-form-item label="密码" prop="password" :rules="passwordRules">
+              <mu-text-field type="password" v-model="newUser.password" prop="password"></mu-text-field>
+            </mu-form-item>
+            <mu-form-item label="手机号" prop="phone" :rules="phoneRules">
+              <mu-text-field v-model="newUser.phone" prop="phone"></mu-text-field>
+            </mu-form-item>
+            <mu-form-item label="邮箱" prop="email" :rules="emailRules">
+              <mu-text-field v-model="newUser.email" prop="email"></mu-text-field>
+            </mu-form-item>
+            <mu-form-item>
+              <mu-button color="primary" @click="submit">提交</mu-button>
+            </mu-form-item>
+          </mu-form>
+        </mu-container>
+         <!--<mu-text-field class="mu-input-field" v-model="newUser.name" label="用户名" label-float></mu-text-field>-->
+         <!--<mu-text-field class="mu-input-field ml30" v-model="newUser.password" label="密码" label-float></mu-text-field>-->
+         <!--<mu-text-field class="mu-input-field" label="邮箱" v-model="newUser.email" label-float></mu-text-field>-->
+         <!--<mu-text-field class="mu-input-field ml30" v-model="newUser.phone" label="手机号码" label-float></mu-text-field>-->
+        <!--<div>-->
+          <!--<mu-button color="primary" @click="submit">提交</mu-button>-->
+        <!--</div>-->
       </div>
 
     </mu-dialog>
@@ -61,6 +77,7 @@
          <mu-text-field class="mu-input-field" v-model="formList.name" label="用户名" label-float></mu-text-field>
          <mu-text-field class="mu-input-field ml30" v-model="formList.password" label="密码" label-float></mu-text-field>
          <mu-text-field class="mu-input-field" v-model="formList.email" label="邮箱" label-float></mu-text-field>
+        <mu-text-field class="mu-input-field ml30" v-model="formList.phone" label="手机号" label-float></mu-text-field>
         <div>
           <mu-button color="primary" @click="submit">提交</mu-button>
         </div>
@@ -102,7 +119,21 @@
               password: '',
               phone: '',
               email: ''
-            }
+            },
+            usernameRules: [
+              {validate: (val) => !!val, message: '必须填写用户名'},
+              {validate: (val) => val.length >= 3, message: '用户名长度大于3'}
+            ],
+            passwordRules: [
+              {validate: (val) => !!val, message: '必须填写密码'},
+              {validate: (val) => val.length >= 3 && val.length <= 10, message: '密码长度大于3小于10'}
+            ],
+            phoneRules: [
+              {validate: (val) => !!val, message: '必须填写手机号'},
+            ],
+            emailRules: [
+              {validate: (val) => !!val, message: '必须填写邮箱'}
+            ]
           }
       },
       created() {
@@ -117,25 +148,52 @@
             })
       },
       methods: {
-          handleSortChange(name, order) {
-            this.userList = this.userList.sort((a, b) => order === 'asc' ? a[name] -b[name] : b[name] - a[name]);
-          },
-          edit($event, obj) {
-            this.openForm = true;
-            this.formList = obj;
-            this.isEdit = true;
-          },
-          addUser() {
-            this.addForm = true;
-            this.isEdit = false;
-          },
-          closeDialog() {
-            this.openForm = false;
-            this.addForm = false;
-            this.isEdit = false;
-          },
-          submit() {
-            var that = this;
+        lnitializationData() {//初始化页面数据
+          this.$axios.get('api/adduser', {},
+            {emulateJSON: true}
+          ).then((response) => {
+            this.msg.pagTotal = response.data.data.totalElements;
+            this.systManage = response.data.data.content;
+          })
+        },
+        handleSortChange(name, order) {
+          this.userList = this.userList.sort((a, b) => order === 'asc' ? a[name] - b[name] : b[name] - a[name]);
+        },
+        edit($event, obj) {
+          this.openForm = true;
+          this.formList = obj;
+          this.isEdit = true;
+        },
+        del($event, obj) {
+          let that = this;
+          this.$axios.post('api/deleteUser', obj.id)
+            .then(function (response) {
+              that.$router.go(0);
+              that.$message({
+                message: '删除成功',
+                type: 'success',
+                duration: 2000
+              });
+            })
+        },
+        addUser() {
+          this.addForm = true;
+          this.isEdit = false;
+        },
+        closeDialog() {
+          this.openForm = false;
+          this.addForm = false;
+          this.isEdit = false;
+          this.newUser = {
+            name: '',
+            password: '',
+            phone: '',
+            email: ''
+          }
+        },
+        submit() {
+          let that = this;
+          this.$refs.form.validate().then((result) => {
             if (this.isEdit) {
               var data = this.formList;
               this.openForm = false;
@@ -146,10 +204,19 @@
               console.log(data);
               this.$axios.post('api/adduser', data)
                 .then(function (response) {
-                  console.log(response);
+                  that.$message({
+                    message: '添加成功',
+                    type: 'success',
+                    duration: 2000
+                  });
+                  that.lnitializationData();
+                })
+                .catch(function (error) {
+                  console.log(error);
                 })
             }
-          }
+          });
+        }
       }
     }
 </script>
