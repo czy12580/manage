@@ -94,6 +94,7 @@
         components: {
           Index
         },
+      inject: ['reload'], //局部刷新 this.reload();
       data() {
           return {
             date: undefined,
@@ -144,7 +145,6 @@
             });
           this.$axios.get('api/admin')
             .then(function (response) {
-              console.log(response);
             })
       },
       methods: {
@@ -168,7 +168,7 @@
           let that = this;
           this.$axios.post('api/deleteUser', obj.id)
             .then(function (response) {
-              that.$router.go(0);
+              that.reload();
               that.$message({
                 message: '删除成功',
                 type: 'success',
@@ -199,12 +199,12 @@
             console.log(data);
             this.$axios.post('api/adduser', data)
               .then(function (response) {
+                that.reload();
                 that.$message({
                   message: '添加成功',
                   type: 'success',
                   duration: 2000
                 });
-                that.$router.go(0);
               })
               .catch(function (error) {
                 console.log(error);
@@ -215,9 +215,9 @@
           var that = this;
           var data = this.formList;
           this.openForm = false;
-          console.log(data);
           this.$axios.post('api/updateUser', data)
             .then(function (response) {
+              that.reload();
               that.$message({
                 message: '修改成功',
                 type: 'success',
