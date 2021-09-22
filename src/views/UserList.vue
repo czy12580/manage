@@ -3,7 +3,7 @@
     <Index></Index>
     <div class="content">
       <mu-container>
-        <mu-card style="width: 100%;padding: 70px;">
+        <mu-card style="width: 100%;padding: 70px;min-width: 1000px;">
           <h3 class="title">用户列表</h3>
           <a class="add-btn" @click="addUser()"><img src="../assets/添加.png" width="40" height="40"></a>
           <mu-data-table :columns="columns" :sort.sync="sort" @sort-change="handleSortChange" :data="userList">
@@ -74,12 +74,12 @@
         <mu-button flat slot="right" @click="closeDialog">x</mu-button>
       </mu-appbar>
       <div class="form-content">
-         <mu-text-field class="mu-input-field" v-model="formList.name" label="用户名" label-float></mu-text-field>
-         <mu-text-field class="mu-input-field ml30" v-model="formList.password" label="密码" label-float></mu-text-field>
-         <mu-text-field class="mu-input-field" v-model="formList.email" label="邮箱" label-float></mu-text-field>
-        <mu-text-field class="mu-input-field ml30" v-model="formList.phone" label="手机号" label-float></mu-text-field>
+        <mu-text-field class="mu-input-field" v-model="formList.name" label="用户名" label-float></mu-text-field>
+        <mu-text-field class="mu-input-field ml30" v-model="formList.password" label="密码" label-float></mu-text-field>
+        <mu-text-field class="mu-input-field" v-model="formList.phone" label="手机号" label-float></mu-text-field>
+        <mu-text-field class="mu-input-field ml30" v-model="formList.email" label="邮箱" label-float></mu-text-field>
         <div>
-          <mu-button color="primary" @click="submit">提交</mu-button>
+          <mu-button color="primary" @click="update">提交</mu-button>
         </div>
       </div>
 
@@ -105,11 +105,11 @@
             },
             columns: [
               {title: 'ID', width: 100, name: 'ID'},
-              {title: '手机号码', width: 200, name: 'phone'},
-              {title: '密码', width: 200, name: 'password'},
-              {title: '用户名', width: 100, name: 'name'},
-              {title: '邮箱', width: 200, name: 'email'},
-              {title: '操作',width: 200, name: 'action'}
+              {title: '手机号码', width: 180, name: 'phone'},
+              {title: '密码', width: 180, name: 'password'},
+              {title: '用户名', width: 150, name: 'name'},
+              {title: '邮箱', width: 210, name: 'email'},
+              {title: '操作',width: 140, name: 'action'}
             ],
             openForm: false,
             addForm: false,
@@ -194,28 +194,39 @@
         submit() {
           let that = this;
           this.$refs.form.validate().then((result) => {
-            if (this.isEdit) {
-              var data = this.formList;
-              this.openForm = false;
-              console.log(data);
-            } else {
-              var data = that.newUser;
-              this.addForm = false;
-              console.log(data);
-              this.$axios.post('api/adduser', data)
-                .then(function (response) {
-                  that.$message({
-                    message: '添加成功',
-                    type: 'success',
-                    duration: 2000
-                  });
-                  that.lnitializationData();
-                })
-                .catch(function (error) {
-                  console.log(error);
-                })
-            }
+            var data = that.newUser;
+            this.addForm = false;
+            console.log(data);
+            this.$axios.post('api/adduser', data)
+              .then(function (response) {
+                that.$message({
+                  message: '添加成功',
+                  type: 'success',
+                  duration: 2000
+                });
+                that.$router.go(0);
+              })
+              .catch(function (error) {
+                console.log(error);
+              })
           });
+        },
+        update() {
+          var that = this;
+          var data = this.formList;
+          this.openForm = false;
+          console.log(data);
+          this.$axios.post('api/updateUser', data)
+            .then(function (response) {
+              that.$message({
+                message: '修改成功',
+                type: 'success',
+                duration: 2000
+              });
+            })
+            .catch(function (error) {
+              console.log(error);
+            })
         }
       }
     }
