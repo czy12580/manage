@@ -92,5 +92,19 @@
     text-align: center;
     line-height: 180px;
     font-weight: bold;
+    box-shadow: 8px 8px 3px #6a6a6a;
+    transition: transform 0.5s ease;
+    -webkit-transition: -webkit-transform 0.5s ease;
   }
+  .item:hover {
+    /*animation: flow 0.7s;*/
+    transform: translateY(-10px);
+    transition: transform 0.5s ease;
+    -webkit-transition: -webkit-transform 0.5s ease;
+  }
+  /*@keyframes flow {*/
+    /*0% {transform: translateY(-5px)}*/
+    /*50%{transform: translateY(-10px)}*/
+    /*100% {transform: translateY(5px)}*/
+  /*}*/
 </style>

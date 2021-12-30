@@ -69,7 +69,7 @@
     </mu-dialog>
 
     <!--编辑表单-->
-    <mu-dialog width="800" :open.sync="openForm" :esc-press-close="false" :overlay-close="false">
+    <mu-dialog  width="800" :open.sync="openForm" :esc-press-close="false" :overlay-close="false">
       <mu-appbar style="width: 100%;" color="primary" title="用户信息">
         <mu-button flat slot="right" @click="closeDialog">x</mu-button>
       </mu-appbar>

@@ -8,6 +8,7 @@ import MuseUI from 'muse-ui'
 import 'muse-ui/dist/muse-ui.css'
 import ElemntUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import store from '@/store/index'
 
 
 Vue.config.productionTip = false;
@@ -19,6 +20,7 @@ Vue.use(ElemntUI);
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })

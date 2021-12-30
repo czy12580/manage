@@ -24,6 +24,16 @@ const router = new Router({
       path: '/admintool',
       name: 'Admintool',
       component: () => import("@/views/AdminTool")
+    },
+    {
+      path: '/vuex',
+      name: 'Vuex',
+      component: () => import("@/views/Vuex")
+    },
+    {
+      path: '/assembly',
+      name: 'Assembly',
+      component: () => import("@/views/Assembly")
     }
   ]
 });

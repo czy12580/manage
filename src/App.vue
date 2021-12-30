@@ -37,8 +37,11 @@ export default {
   text-align: center;
 }
   .content {
-    margin: 0 auto;
+    margin: 80px auto;
     padding: 30px 30px;
     position: relative;
+  }
+  .mu-dialog-body {
+    padding: 0 !important;
   }
 </style>
